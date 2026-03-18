@@ -649,7 +649,7 @@ superbPlot <- function(data,
         if ((adjustments$decorrelation == "CA")||(adjustments$decorrelation == "UA")||(substr(adjustments$decorrelation,1,2) == "LD")) {
             message(paste("superb::FYI: The average correlation per group is ", paste(unique(sprintf("%.4f",mean(round(rs,4)))), collapse=" ")) )
 
-            winers <- suppressWarnings(plyr::ddply(data, .fun = "WinerCompoundSymmetryTest", .variables= BSFactors, variables)) 
+            winers <- suppressWarnings(plyr::ddply(data, .fun = WinerCompoundSymmetryTest, .variables= BSFactors, variables)) 
             winers <- winers[,length(winers)]
             if (any(winers<.05, na.rm = TRUE))
                 message("superb::ADVICE: Some of the groups' data are not compound symmetric. Consider using CM." )
@@ -657,16 +657,16 @@ superbPlot <- function(data,
         
         # 6.3: if decorrelate is CM or LM: show epsilon, test Winer and Mauchly
         if (adjustments$decorrelation %in% c("CM","LM")) {
-            epsGG <- suppressWarnings(plyr::ddply(data, .fun = "HyunhFeldtEpsilon", .variables= BSFactors, variables)) 
+            epsGG <- suppressWarnings(plyr::ddply(data, .fun = HyunhFeldtEpsilon, .variables= BSFactors, variables)) 
             epsGG <- epsGG[,length(epsGG)]
             message(paste("superb::FYI: The HyunhFeldtEpsilon measure of sphericity per group are ", paste(sprintf("%.3f",round(epsGG, 4)), collapse=" ")) )
 
-            winers <- suppressWarnings(plyr::ddply(data, .fun = "WinerCompoundSymmetryTest", .variables= BSFactors, variables) )
+            winers <- suppressWarnings(plyr::ddply(data, .fun = WinerCompoundSymmetryTest, .variables= BSFactors, variables) )
             winers <- winers[,length(winers)]
             if (all(winers>.05, na.rm = TRUE))
                 message("superb::FYI: All the groups' data are compound symmetric. Consider using CA or UA." )
 
-            mauchlys <- plyr::ddply(data, .fun = "MauchlySphericityTest", .variables= BSFactors, variables) 
+            mauchlys <- plyr::ddply(data, .fun = MauchlySphericityTest, .variables= BSFactors, variables) 
             mauchlys <- mauchlys[,length(mauchlys)]
             if (any(mauchlys<.05, na.rm = TRUE))
                 message("superb::FYI: Some of the groups' data are not spherical. Use error bars with caution." )
